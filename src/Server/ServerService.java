@@ -58,6 +58,7 @@ public class ServerService extends Thread {
             while (PLAYERS_NUM < PLAYER_LIMIT) {
                 System.out.println("Waiting for player number: " + (PLAYERS_NUM + 1));
                 players[PLAYERS_NUM] = new Player((SSLSocket) server.serverSocket.accept(),PLAYERS_NUM);
+                players[PLAYERS_NUM].socket.startHandshake();
                 players[PLAYERS_NUM++].sendMessage("connected");
             }
             Main.isLockFree = true;
@@ -71,7 +72,7 @@ public class ServerService extends Thread {
 
         }catch (Exception e){
             Main.isLockFree = true;
-            if (players[0].isAlive())players[0].sendMessage("error");
+            if (players[0].isAlive()) players[0].sendMessage("error");
             if (players[1].isAlive()) players[1].sendMessage("error");
 
         }

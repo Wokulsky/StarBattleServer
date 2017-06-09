@@ -29,6 +29,7 @@ public class Server {
             serverFactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
             serverSocket = (SSLServerSocket) serverFactory.createServerSocket(HOST_ADRESS);
         } catch (IOException e) {
+            System.out.println("ERROR: przy tworzeniu socketu");
             throw new CreateSocketException();
         }
     }

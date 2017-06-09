@@ -14,7 +14,7 @@ public class Player {
 
     private  DataInputStream in;
     private DataOutputStream out;
-    private SSLSocket socket;
+    public SSLSocket socket;
     private boolean isAlive = false;
     private int player_id;
 
@@ -28,6 +28,7 @@ public class Player {
             isAlive = true;
         }catch (Exception e){
             isAlive = false;
+            System.out.println("ERROR: przy tworzeniu Playera");
             throw new LostConnectionException();
         }
 
