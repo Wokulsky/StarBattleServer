@@ -36,6 +36,8 @@ public class Main {
                     e.printStackTrace();
                 } catch (LostConnectionException e) {
                     e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 

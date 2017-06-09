@@ -19,13 +19,14 @@ public class ServerService extends Thread {
     private int PLAYERS_NUM;
     private int gameCounter;
     private Server server;
-    Game game;
+    private Game game;
+
     public ServerService() throws CreateSocketException {
         players = new Player[PLAYER_LIMIT];
         PLAYERS_NUM = 0;
         server = Server.getInstance();
     }
-    public ServerService(SSLSocket socket) throws CreateSocketException, LostConnectionException, IOException {
+    public ServerService(SSLSocket socket) throws CreateSocketException, LostConnectionException, Exception {
         Main.isLockFree = false;
         server = Server.getInstance();
         players = new Player[PLAYER_LIMIT];
@@ -59,9 +60,9 @@ public class ServerService extends Thread {
                 players[PLAYERS_NUM] = new Player((SSLSocket) server.serverSocket.accept(),PLAYERS_NUM);
                 players[PLAYERS_NUM++].sendMessage("connected");
             }
+            Main.isLockFree = true;
             players[0].sendMessage("Pierwszy");
             players[1].sendMessage("Drugi");
-            Main.isLockFree = true;
             String readyPlayerONE = players[0].getMessage();
             String readyPlayerTWO = players[1].getMessage();
             if (readyPlayerONE.equals("gotowy") && readyPlayerTWO.equals("gotowy")  ){
@@ -70,6 +71,9 @@ public class ServerService extends Thread {
 
         }catch (Exception e){
             Main.isLockFree = true;
+            if (players[0].isAlive())players[0].sendMessage("error");
+            if (players[1].isAlive()) players[1].sendMessage("error");
+
         }
     }
     private String playerShootToBoot(int player_numer) throws Exception {
@@ -153,7 +157,7 @@ public class ServerService extends Thread {
             }
         }*/
 
-    private void sendMessageForAllPlayer(String message) throws IOException {
+    private void sendMessageForAllPlayer(String message) throws Exception {
         for ( int i = 0 ; i < PLAYER_LIMIT; ++i)
             players[i].sendMessage(message);
     }

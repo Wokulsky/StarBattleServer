@@ -15,8 +15,9 @@ public class Player {
     private  DataInputStream in;
     private DataOutputStream out;
     private SSLSocket socket;
-    private boolean isLive = false;
+    private boolean isAlive = false;
     private int player_id;
+
     public Player( SSLSocket socket,int player_id) throws LostConnectionException {
         this.socket = socket;
         this.player_id = player_id;
@@ -24,11 +25,15 @@ public class Player {
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
             System.out.println("Just connected to " + socket.getRemoteSocketAddress()+"\n"+ socket.getInetAddress());
-            isLive = true;
+            isAlive = true;
         }catch (Exception e){
+            isAlive = false;
             throw new LostConnectionException();
         }
 
+    }
+    public boolean isAlive(){
+        return isAlive;
     }
     public String getMessage() throws Exception {
             try{
@@ -37,6 +42,7 @@ public class Player {
                 return message;
             }catch (Exception e){
                 System.out.println("ERROR: get message from player["+player_id+"]");
+                isAlive = false;
                 throw e;
             }
     }
@@ -47,12 +53,14 @@ public class Player {
             return false;
         }
     }
-    public void sendMessage(String message) {
+    public void sendMessage(String message) throws Exception {
         try {
-            System.out.println("Sending message to player[" + player_id + "]: " + message);
             out.writeUTF(message);
+            System.out.println("Sending message to player[" + player_id + "]: " + message);
         }catch (Exception e){
             System.out.println("ERROR: Sending message to player[" + player_id + "]");
+            isAlive = false;
+            throw e;
         }
     }
     public void close() throws CloseConnectionException {
