@@ -24,6 +24,7 @@ public class Main {
         System.setProperty("javax.net.ssl.trustStorePassword","djangoiza");
         System.setProperty("javax.net.ssl.trustStoreType","PKCS12");
         int connectCounter = 0 ;
+        System.out.println("Server is running");
             while ( true) {
                 try {
                     if (isLockFree) {

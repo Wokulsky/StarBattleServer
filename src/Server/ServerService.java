@@ -39,7 +39,6 @@ public class ServerService extends Thread {
         try{
             waitForPlayers();
             runGame();
-
         }catch (WaitForPlayerException ex){
             System.out.println("WAIT PLAYER EXC");
             //ex.printStackTrace();
@@ -52,14 +51,18 @@ public class ServerService extends Thread {
             e.printStackTrace();
         }
     }
-
     private void waitForPlayers() throws Exception{
         try {
             while (PLAYERS_NUM < PLAYER_LIMIT) {
-                System.out.println("Waiting for player number: " + (PLAYERS_NUM + 1));
-                players[PLAYERS_NUM] = new Player((SSLSocket) server.serverSocket.accept(),PLAYERS_NUM);
-                players[PLAYERS_NUM].socket.startHandshake();
-                players[PLAYERS_NUM++].sendMessage("connected");
+                try {
+                    System.out.println("Waiting for player number: " + (PLAYERS_NUM + 1));
+                    players[PLAYERS_NUM] = new Player((SSLSocket) server.serverSocket.accept(), PLAYERS_NUM);
+                    players[PLAYERS_NUM].socket.startHandshake();
+                    players[PLAYERS_NUM++].sendMessage("connected");
+                }catch (Exception e){
+                    System.out.println("ERROR: Wrong player connect!");
+                    if (PLAYERS_NUM >= 2 ) PLAYERS_NUM--;
+                }
             }
             Main.isLockFree = true;
             players[0].sendMessage("Pierwszy");
